@@ -7,10 +7,7 @@ from usps.api.addressinformation import AddressValidate, ZipCodeLookup, CityStat
 from usps.api.ratecalculator import DomesticRateCalculator, InternationalRateCalculator
 from usps.api.servicestandards import PriorityMailServiceStandards, PackageServicesServiceStandards, ExpressMailServiceCommitment, get_service_standards
 from usps.api.tracking import TrackConfirm
-
-
-USERID = "621OLYMP1079"
-PASSWORD = "228QM69IV159"
+from .config import USERID, PASSWORD
 
 class TestRateCalculatorAPI(unittest.TestCase):
     """
