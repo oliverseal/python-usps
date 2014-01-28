@@ -2,15 +2,21 @@
 Tests for USPS API wrappers
 """
 import unittest
+import sys,os,os.path
+
+sys.path.append(os.path.realpath(os.path.dirname(os.path.realpath(__file__))+'/../'))
+
 from usps.api import USPS_CONNECTION_TEST, USPS_CONNECTION
 from usps.api.addressinformation import AddressValidate, ZipCodeLookup, CityStateLookup
 from usps.api.ratecalculator import DomesticRateCalculator, InternationalRateCalculator
 from usps.api.servicestandards import PriorityMailServiceStandards, PackageServicesServiceStandards, ExpressMailServiceCommitment, get_service_standards
 from usps.api.tracking import TrackConfirm
 
-
-USERID = None
-PASSWORD = None
+try:
+  from tests.config import USERID, PASSWORD
+except ImportError:
+  USERID = None
+  PASSWORD = None
 
 class TestRateCalculatorAPI(unittest.TestCase):
     """
@@ -20,6 +26,7 @@ class TestRateCalculatorAPI(unittest.TestCase):
         """
         Ensure that Domestic Rate Calculator returns quotes in the expected format
         """
+
         connector = DomesticRateCalculator(USPS_CONNECTION, USERID, PASSWORD)
         response = connector.execute([{'Service': 'First Class',
                                        'FirstClassMailType': 'LETTER',
@@ -54,7 +61,7 @@ class TestRateCalculatorAPI(unittest.TestCase):
                                          'Machinable': 'true'
                                         },
                                         ])
-       
+        
         for rate in [response[0], response[1]]:
             self.assertTrue('Postage' in rate)
             self.assertTrue('Rate' in rate['Postage'])
@@ -352,10 +359,11 @@ class TestAddressInformationAPI(unittest.TestCase):
 if __name__ == '__main__':
     #please append your USPS USERID to test against the wire
     import sys
-    if len(sys.argv) < 2:
+    if len(sys.argv) < 2 and (USERID is None or PASSWORD is None):
         print "You must provide a USERID and PASSWORD"
         exit()
     else:
         USERID = sys.argv.pop()
         PASSWORD = sys.argv.pop()
+        print('Testing using: \nUSERID {0}\nPASSWD: {1}'.format(USERID, PASSWORD))
         unittest.main()
