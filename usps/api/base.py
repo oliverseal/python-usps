@@ -2,7 +2,7 @@
 Base implementation of USPS service wrapper
 """
 
-import urllib, urllib2
+import urllib
 from usps.utils import utf8urlencode, xmltodict, dicttoxml
 from usps.errors import USPSXMLError
 
@@ -36,7 +36,8 @@ class USPSService(object):
         """
         data = {'XML':ET.tostring(xml),
                 'API':self.API}
-        response = urllib2.urlopen(self.url, utf8urlencode(data))
+        response = urllib.request.urlopen(self.url, utf8urlencode(data))
+
         root = ET.parse(response).getroot()
         if root.tag == 'Error':
             raise USPSXMLError(root)
